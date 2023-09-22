@@ -1,6 +1,4 @@
 import { notFoundError } from "../errors/not-found";
-import { CreateBook } from "../protocols/book";
-import { CreateReview } from "../protocols/review";
 
 import * as booksRepository from "./../repositories/books-repository";
 
@@ -17,12 +15,12 @@ export async function getBook(id: number) {
   return book;
 }
 
-export async function createBook(book: CreateBook) {
+export async function createBook(book: booksRepository.CreateBook) {
   return await booksRepository.createBook(book);
 }
 
-export async function reviewBook(review: CreateReview) {
-  await getBook(review.bookId); // check if the book exists
+export async function reviewBook(bookId: number, bookReview: booksRepository.CreateReview) {
+  await getBook(bookId); // check if the book exists
 
-  return await booksRepository.reviewBook(review);
+  return await booksRepository.reviewBook(bookId, bookReview);
 }

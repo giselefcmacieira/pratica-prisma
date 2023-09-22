@@ -2,10 +2,11 @@ import { Request, Response } from "express";
 import httpStatus from "http-status";
 
 import { isIdValid } from "../utils/id-validator";
-import { CreateBook } from "../protocols/book";
-import { CreateReview } from "../protocols/review";
+
+import { BodyReview } from "../protocols/review";
 
 import * as bookService from "./../services/book-service";
+import { CreateBook } from "repositories/books-repository";
 
 export async function getBooks(req: Request, res: Response) {
   const books = await bookService.getBooks();
@@ -28,10 +29,11 @@ export async function createBook(req: Request, res: Response) {
 }
 
 export async function reviewBook(req: Request, res: Response) {
-  const review = req.body as CreateReview;
+  const body = req.body as BodyReview;
+  const { bookId, grade, review } = body
+  const bookReview = { grade, review }
+  if (!isIdValid(bookId)) return res.sendStatus(httpStatus.BAD_REQUEST);
 
-  if (!isIdValid(review.bookId)) return res.sendStatus(httpStatus.BAD_REQUEST);
-
-  await bookService.reviewBook(review);
+  await bookService.reviewBook(bookId, bookReview);
   res.sendStatus(httpStatus.OK);
 }
